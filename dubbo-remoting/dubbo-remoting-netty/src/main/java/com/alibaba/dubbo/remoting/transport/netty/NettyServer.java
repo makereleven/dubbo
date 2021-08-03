@@ -64,9 +64,11 @@ public class NettyServer extends AbstractServer implements Server {
     @Override
     protected void doOpen() throws Throwable {
         NettyHelper.setNettyLoggerFactory();
+        // 创建 boss 和 worker 线程池
         ExecutorService boss = Executors.newCachedThreadPool(new NamedThreadFactory("NettyServerBoss", true));
         ExecutorService worker = Executors.newCachedThreadPool(new NamedThreadFactory("NettyServerWorker", true));
         ChannelFactory channelFactory = new NioServerSocketChannelFactory(boss, worker, getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS));
+        // 创建 ServerBootstrap
         bootstrap = new ServerBootstrap(channelFactory);
 
         final NettyHandler nettyHandler = new NettyHandler(getUrl(), this);
@@ -75,6 +77,7 @@ public class NettyServer extends AbstractServer implements Server {
         // https://issues.jboss.org/browse/NETTY-379
         // final Timer timer = new HashedWheelTimer(new NamedThreadFactory("NettyIdleTimer", true));
         bootstrap.setOption("child.tcpNoDelay", true);
+        // 设置 PipelineFactory
         bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
             @Override
             public ChannelPipeline getPipeline() {
@@ -90,6 +93,7 @@ public class NettyServer extends AbstractServer implements Server {
                 return pipeline;
             }
         });
+        // 绑定到指定的 ip 和端口上
         // bind
         channel = bootstrap.bind(getBindAddress());
     }
