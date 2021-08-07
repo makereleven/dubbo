@@ -98,6 +98,7 @@ public class DecodeableRpcResult extends RpcResult implements Codec, Decodeable 
                     throw new IOException(StringUtils.toString("Read response data failed.", e));
                 }
                 break;
+            // 返回值为空，且携带了 attachments 集合
             case DubboCodec.RESPONSE_NULL_VALUE_WITH_ATTACHMENTS:
                 try {
                     setAttachments((Map<String, String>) in.readObject(Map.class));
@@ -105,6 +106,7 @@ public class DecodeableRpcResult extends RpcResult implements Codec, Decodeable 
                     throw new IOException(StringUtils.toString("Read response data failed.", e));
                 }
                 break;
+            // 返回值不为空，且携带了 attachments 集合
             case DubboCodec.RESPONSE_VALUE_WITH_ATTACHMENTS:
                 try {
                     Type[] returnType = RpcUtils.getReturnTypes(invocation);

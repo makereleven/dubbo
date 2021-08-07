@@ -52,6 +52,7 @@ public class ChannelEventRunnable implements Runnable {
 
     @Override
     public void run() {
+        // 检测通道状态，对于请求或响应消息，此时 state = RECEIVED
         if (state == ChannelState.RECEIVED) {
             try {
                 handler.received(channel, message);
@@ -60,6 +61,7 @@ public class ChannelEventRunnable implements Runnable {
                         + ", message is " + message, e);
             }
         } else {
+            // 其他消息类型通过 switch 进行处理
             switch (state) {
             case CONNECTED:
                 try {
